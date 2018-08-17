@@ -5,9 +5,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.tan.seckill.po.SuccessKilled;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.tan.seckill.po.SuccessKilled;
 
 import javax.annotation.Resource;
 
@@ -30,12 +30,12 @@ public class SuccessKilledMapperTest {
         successKilled.setUserPhone(13671285902L);
         successKilled.setState(new Byte("0"));
         int num = successKilledMapper.insert(successKilled);
-        log.info("num:"+num);
+        log.info("num:" + num);
     }
 
     @Test
     public void queryByIdWithSeckill() throws Exception {
-        SuccessKilled successKilled = successKilledMapper.queryByIdWithSeckill(1001L,13671285902L);
+        SuccessKilled successKilled = successKilledMapper.queryByIdWithSeckill(1001L, 13671285902L);
         log.info(successKilled.toString());
     }
 

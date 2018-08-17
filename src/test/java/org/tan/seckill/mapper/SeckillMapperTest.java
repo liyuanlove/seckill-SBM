@@ -32,7 +32,7 @@ public class SeckillMapperTest {
     @Test
     public void reduceNumber() throws Exception {
         long id = 1000L;
-        int rowindex = seckillMapper.reduceNumber(id,new Date());
+        int rowindex = seckillMapper.reduceNumber(id, new Date());
         Seckill seckill = seckillMapper.selectByPrimaryKey(id);
         log.info(seckill.toString());
     }
@@ -52,7 +52,7 @@ public class SeckillMapperTest {
         Example example = new Example(Seckill.class);
         example.orderBy("createTime").desc();
         List<Seckill> userList = seckillMapper.selectByExample(example);
-        for(Seckill seckill:userList){
+        for (Seckill seckill : userList) {
             log.info(seckill.toString());
         }
 

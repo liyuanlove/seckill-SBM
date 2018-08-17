@@ -44,7 +44,7 @@ var seckill = {
                                 var state = killResult['state'];
                                 var stateInfo = killResult['stateInfo'];
                                 //显示秒杀结果
-                                node.html('<span class="label label-success">'+stateInfo+'</span>');
+                                node.html('<span class="label label-success">' + stateInfo + '</span>');
                             }
                         });
                     });
@@ -117,7 +117,7 @@ var seckill = {
             var startTime = params['startTime'];
             var endTime = params['endTime'];
             var seckillId = params['seckillId'];
-            $.get(seckill.URL.now(), {}, function (result){
+            $.get(seckill.URL.now(), {}, function (result) {
                 if (result && result['success']) {
                     var nowTime = result['data'];
                     seckill.countDown(seckillId, nowTime, startTime, endTime);

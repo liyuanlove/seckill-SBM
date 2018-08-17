@@ -5,7 +5,7 @@
 
     <groupId>org.tan</groupId>
     <artifactId>seckill</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>seckill-SBM</name>
@@ -15,8 +15,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.0.3.RELEASE</version>
-        <!--<version>1.5.12.RELEASE</version>-->
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -28,11 +26,11 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <!--mybatis-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -47,6 +45,7 @@
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
+
         <!--mapper 接口模版-->
         <dependency>
             <groupId>tk.mybatis</groupId>
@@ -72,16 +71,18 @@
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-
         <!-- 引入 redis 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+
+        <!--模板引擎-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
 
         <!-- 工具库 -->
         <dependency>
@@ -93,6 +94,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+        <!--序列化工具-->
         <dependency>
             <groupId>com.dyuproject.protostuff</groupId>
             <artifactId>protostuff-core</artifactId>
@@ -103,7 +105,6 @@
             <artifactId>protostuff-runtime</artifactId>
             <version>1.1.2</version>
         </dependency>
-
         <!--语法糖：简化代码黑科技-->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -117,6 +118,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--junit-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -133,7 +135,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -147,6 +148,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <!--热部署-->
                     <fork>true</fork>
                 </configuration>
             </plugin>

@@ -9,7 +9,7 @@
         <property name="endingDelimiter" value="`"/>
 
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
-            <property name="mappers" value="org.tan.seckill.utils.MyMapper"/>
+            <property name="mappers" value="org.tan.seckill.core.utils.MyMapper"/>
         </plugin>
 
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"

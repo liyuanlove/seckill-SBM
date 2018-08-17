@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
-import org.tan.seckill.dao.RedisDao;
-import org.tan.seckill.dto.Exposer;
-import org.tan.seckill.dto.SeckillExecution;
-import org.tan.seckill.enums.SeckillStateEnum;
-import org.tan.seckill.exception.RepeatKillException;
-import org.tan.seckill.exception.SeckillClosedException;
-import org.tan.seckill.exception.SeckillException;
+import org.tan.seckill.core.dto.Exposer;
+import org.tan.seckill.core.dto.SeckillResult;
+import org.tan.seckill.core.enums.SeckillStateEnum;
+import org.tan.seckill.core.exception.RepeatKillException;
+import org.tan.seckill.core.exception.SeckillClosedException;
+import org.tan.seckill.core.exception.SeckillException;
+import org.tan.seckill.core.redis.cache.RedisCacheDao;
 import org.tan.seckill.mapper.SeckillMapper;
 import org.tan.seckill.mapper.SuccessKilledMapper;
 import org.tan.seckill.po.Seckill;
@@ -30,8 +30,8 @@ import java.util.Map;
  * Author: Redinw
  * Description:
  */
-@Service
 @Slf4j
+@Service
 public class SeckillServiceImpl implements ISeckillService {
 
     public static final String salt = "test";
@@ -40,17 +40,19 @@ public class SeckillServiceImpl implements ISeckillService {
     private SeckillMapper seckillMapper;
     @Autowired
     private SuccessKilledMapper successKilledMapper;
+    //    @Autowired
+//    private RedisDao redisDao;
     @Autowired
-    private RedisDao redisDao;
+    private RedisCacheDao redisCacheDao;
 
     @Override
-    public List<Seckill> getListByPage(Integer page, Integer pageSize) {
+    public List<Seckill> list(Integer page, Integer pageSize) {
         // 开始分页
         PageHelper.startPage(page, pageSize);
         Example example = new Example(Seckill.class);
         example.orderBy("createTime").desc();
-        List<Seckill> userList = seckillMapper.selectByExample(example);
-        return userList;
+        List<Seckill> list = seckillMapper.selectByExample(example);
+        return list;
     }
 
     @Override
@@ -60,28 +62,31 @@ public class SeckillServiceImpl implements ISeckillService {
 
     /**
      * 暴露秒杀接口
+     *
      * @param seckillId
      * @return
      */
     @Override
     public Exposer exoportSeckillUrl(long seckillId) {
-        Seckill seckill = redisDao.getObject(seckillId,Seckill.class);
+        Seckill seckill = (Seckill) redisCacheDao.get("seckill", seckillId);
+//        Seckill seckill = redisDao.getObject(seckillId, Seckill.class);
         if (seckill == null) {
             seckill = seckillMapper.selectByPrimaryKey(seckillId);
             if (seckill == null) {
-                return new Exposer(false, seckillId);
+                return Exposer.notExist(seckillId);
             } else {
-                redisDao.putObject(seckillId,seckill);
+                redisCacheDao.put("seckill", seckillId, seckill);
+//                redisDao.putObject(seckillId, seckill);
             }
         }
         Date startTime = seckill.getStartTime();
         Date endTime = seckill.getEndTime();
         Date nowTime = new Date();
         if (nowTime.getTime() < startTime.getTime() || nowTime.getTime() > endTime.getTime()) {
-            return new Exposer(false, seckillId, nowTime.getTime(), startTime.getTime(), endTime.getTime());
+            return Exposer.timeError(seckillId, nowTime.getTime(), startTime.getTime(), endTime.getTime());
         }
         String md5 = getMD5(seckillId);
-        return new Exposer(true, md5, seckillId);
+        return Exposer.ok(md5, seckillId);
     }
 
     private String getMD5(long seckillId) {
@@ -92,7 +97,7 @@ public class SeckillServiceImpl implements ISeckillService {
 
     @Override
     @Transactional //开启事务
-    public SeckillExecution executeSeckill(long seckllId, long userPhone, String md5) {
+    public SeckillResult executeSeckill(long seckllId, long userPhone, String md5) {
         if (md5 == null || !md5.equals(getMD5(seckllId))) {
             throw new SeckillException("seckill data rewirite");
         }
@@ -116,7 +121,7 @@ public class SeckillServiceImpl implements ISeckillService {
                     throw new SeckillClosedException("seckill is closed");
                 } else {
                     SuccessKilled successKilled = successKilledMapper.queryByIdWithSeckill(seckllId, userPhone);
-                    return new SeckillExecution(seckllId, SeckillStateEnum.SUCCESS, successKilled);
+                    return new SeckillResult(seckllId, SeckillStateEnum.SUCCESS, successKilled);
                 }
             }
         } catch (SeckillClosedException e) {
@@ -128,13 +133,12 @@ public class SeckillServiceImpl implements ISeckillService {
             //所有编译器异常转换为运行期异常
             throw new SeckillException("seckill inner error:" + e.getMessage());
         }
-
     }
 
     @Override
-    public SeckillExecution executeSeckillProcedure(long seckillid, long userPhone, String md5) {
+    public SeckillResult executeSeckillProcedure(long seckillid, long userPhone, String md5) {
         if (md5 == null || !md5.equals(getMD5(seckillid))) {
-            return new SeckillExecution(seckillid, SeckillStateEnum.DATA_REWRITE);
+            return SeckillResult.error(seckillid, SeckillStateEnum.DATA_REWRITE);
         }
         Date killTime = new Date();
         Map<String, Object> map = new HashMap<>();
@@ -147,13 +151,13 @@ public class SeckillServiceImpl implements ISeckillService {
             int result = MapUtils.getInteger(map, "result", -2);
             if (result == 1) {
                 SuccessKilled successKilled = successKilledMapper.queryByIdWithSeckill(seckillid, userPhone);
-                return new SeckillExecution(seckillid, SeckillStateEnum.SUCCESS, successKilled);
+                return SeckillResult.ok(seckillid, SeckillStateEnum.SUCCESS, successKilled);
             } else {
-                return new SeckillExecution(seckillid, SeckillStateEnum.stateOf(result));
+                return SeckillResult.error(seckillid, SeckillStateEnum.stateOf(result));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            return new SeckillExecution(seckillid, SeckillStateEnum.INNER_ERROR);
+            return new SeckillResult(seckillid, SeckillStateEnum.INNER_ERROR);
         }
     }
 }

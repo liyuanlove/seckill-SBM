@@ -35,5 +35,5 @@ public class SuccessKilled {
     @Column(name = "create_time")
     private Date createTime;
 
-   private Seckill seckill;
+    private Seckill seckill;
 }

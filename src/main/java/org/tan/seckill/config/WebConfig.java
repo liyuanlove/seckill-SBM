@@ -36,10 +36,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
         builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+
         ObjectMapper objectMapper = builder.build();
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
         objectMapper.registerModule(simpleModule);
+
         objectMapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);// 忽略 transient 修饰的属性
         converters.add(new MappingJackson2HttpMessageConverter(objectMapper));
         super.configureMessageConverters(converters);
@@ -58,6 +60,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
     /**
      * 指定静态资源目录
+     *
      * @param registry
      */
     @Override
