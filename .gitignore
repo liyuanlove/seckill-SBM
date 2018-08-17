@@ -31,3 +31,20 @@ hs_err_pid*
 .classpath
 .project
 .settings/
+
+!.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
