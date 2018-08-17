@@ -49,6 +49,16 @@ public class SeckillResult {
     }
 
     /**
+     * 秒杀失败
+     *
+     * @param seckillStateEnum
+     */
+    public SeckillResult(SeckillStateEnum seckillStateEnum) {
+        this.state = seckillStateEnum.getState();
+        this.stateInfo = seckillStateEnum.getStateInfo();
+    }
+
+    /**
      * 成功
      *
      * @param seckillId
@@ -69,5 +79,15 @@ public class SeckillResult {
      */
     public static SeckillResult error(long seckillId, SeckillStateEnum seckillStateEnum) {
         return new SeckillResult(seckillId, seckillStateEnum);
+    }
+
+    /**
+     * 失败
+     *
+     * @param seckillStateEnum
+     * @return
+     */
+    public static SeckillResult error(SeckillStateEnum seckillStateEnum) {
+        return new SeckillResult(seckillStateEnum);
     }
 }

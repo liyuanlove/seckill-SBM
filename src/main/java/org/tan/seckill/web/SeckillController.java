@@ -7,9 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.tan.seckill.core.dto.Exposer;
 import org.tan.seckill.core.dto.GlobalResult;
 import org.tan.seckill.core.dto.SeckillResult;
-import org.tan.seckill.core.enums.SeckillStateEnum;
-import org.tan.seckill.core.exception.RepeatKillException;
-import org.tan.seckill.core.exception.SeckillClosedException;
 import org.tan.seckill.po.Seckill;
 import org.tan.seckill.service.ISeckillService;
 
@@ -90,19 +87,9 @@ public class SeckillController {
         if (phone == null) {
             return GlobalResult.error("do not login");
         }
-        SeckillResult seckillExcution = null;
-        //TODO：优化为全局捕获统一处理
-        try {
-            seckillExcution = seckillService.executeSeckill(seckillId, phone, md5);
-        } catch (RepeatKillException e) {
-            seckillExcution = SeckillResult.error(seckillId, SeckillStateEnum.REPEAT_KILL);
-        } catch (SeckillClosedException e) {
-            seckillExcution = SeckillResult.error(seckillId, SeckillStateEnum.END);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            seckillExcution = SeckillResult.error(seckillId, SeckillStateEnum.INNER_ERROR);
-        }
-        return GlobalResult.ok(seckillExcution);
+        SeckillResult seckillResult = null;
+        seckillResult = seckillService.executeSeckill(seckillId, phone, md5);
+        return GlobalResult.ok(seckillResult);
     }
 
     /**

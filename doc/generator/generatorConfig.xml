@@ -8,24 +8,26 @@
         <property name="beginningDelimiter" value="`"/>
         <property name="endingDelimiter" value="`"/>
 
+        <!--mapper父接口-->
         <plugin type="tk.mybatis.mapper.generator.MapperPlugin">
             <property name="mappers" value="org.tan.seckill.core.utils.MyMapper"/>
         </plugin>
 
+        <!--链接配置-->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://localhost:3306/seckill?useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false"
                         userId="root"
                         password="123456">
         </jdbcConnection>
 
-        <!-- 对于生成的pojo所在包 -->
-        <javaModelGenerator targetPackage="com.imooc.po" targetProject="src/main/java"/>
+        <!-- PO配置 -->
+        <javaModelGenerator targetPackage="org.tan.gen.po" targetProject="src/main/java"/>
 
-        <!-- 对于生成的mapper所在目录 -->
-        <sqlMapGenerator targetPackage="mapper" targetProject="src/main/resources"/>
+        <!-- XML配置 -->
+        <sqlMapGenerator targetPackage="gen" targetProject="src/main/resources"/>
 
-        <!-- 配置mapper对应的java映射 -->
-        <javaClientGenerator targetPackage="com.imooc.mapper" targetProject="src/main/java"
+        <!-- DAO配置 -->
+        <javaClientGenerator targetPackage="org.tan.gen.mapper" targetProject="src/main/java"
                              type="XMLMAPPER"/>
 
 
