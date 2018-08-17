@@ -2,7 +2,6 @@
 <configuration>
     <!-- 此xml在spring-kaptcha-1.5.3.RELEASE.jar里 -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <!--<include resource="org/springframework/kaptcha/logging/logback/console-appender.xml" />-->
 
     <!-- ****************************************************************************************** -->
     <!-- ****************************** 本地开发打印日志 ******************************************* -->
@@ -34,7 +33,7 @@
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="FILE"/>
         </root>
-        <logger name="com.stylefeng.guns" level="debug" additivity="false">
+        <logger name="org.tan.seckill" level="debug" additivity="false">
             <appender-ref ref="CONSOLE"/>
         </logger>
     </springProfile>

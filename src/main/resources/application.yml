@@ -17,7 +17,7 @@ spring:
 ##########################################################################
 logging:
   level.root: info
-  level.com.stylefeng: debug
+  level.org.tan: debug
   path: d:\\logs\\
   file: seckill.log
 
